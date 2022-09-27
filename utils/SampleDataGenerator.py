@@ -1,38 +1,43 @@
 import pandas as pd
 import datetime
+import openpyxl
+import random
 import os
 
 class SampleDataGenerator():
+
     def generateDate(startDate, endDate):
         #"27-09-2022" follow this format
         start = datetime.datetime.strptime(startDate, "%d-%m-%Y")
         end = datetime.datetime.strptime(endDate, "%d-%m-%Y")
         date_generated = [start + datetime.timedelta(days=x) for x in range(0, (end-start).days)]
         return date_generated
-        # for date in date_generated:
-        #     print(date.strftime("%d-%m-%Y"))
-#  def generateTimeStamp(startTime, endTime):
-    def generateTimeStamp():
+
+    def generateTimeStamp(self, dataLength):
+        startTime = random.randrange(1, 24)
+        endTime = random.randrange(1, 24)
+
+        if(startTime == endTime):
+            self.generateTimeStamp()
+        if(startTime > endTime):
+            tempTime = startTime
+            startTime = endTime
+            endTime = tempTime
+
+        dataSet = pd.date_range(str(startTime)+":00:00", str(endTime)+":00:00", freq="1s").strftime('%H:%M:%S')
+        dataFrame = pd.DataFrame(dataSet[:dataLength],columns=["TIME"])   
+        
+        return dataFrame
+
+    def generateXMLOrCSVFile(self, startDate, endDate, dataLength):
         localDirectory = os.getcwd()+"\\Samples"
-        # fileNameList = SampleDataGenerator.generateDate(startTime, endTime)
-        if os.path.exists(localDirectory):
-            print("Yes")
-        #"09:30:00" follow this format
-        # for fileName in fileNameList:
-
-        # a = pd.date_range(startTime, endTime, freq="1s").strftime('%H:%M:%S')
-        # return a
-
-    # def generateXMLFile(startDate, endDate, startTime, endTime, setLength):
+        fileNames = SampleDataGenerator.generateDate(startDate,endDate)
+        for fileName in fileNames:
+            if not(os.path.exists(localDirectory + "\\" + fileName)):
+                generatedDataSet = self.generateTimeStamp(dataLength)
 
 
-
-SampleDataGenerator.generateTimeStamp()
-
-
-
-# x = SampleDataGenerator.generateDate("27-09-2022", "30-09-2022")
-# for date in x:
-#     print(date.strftime("%d-%m-%Y"))
-
-
+                
+a = SampleDataGenerator()
+b = a.generateTimeStamp(10)
+print(b)
