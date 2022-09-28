@@ -9,38 +9,52 @@ class DataSampleExtraction():
 
     fileInputValidator = FIV.FileInputValidator()
 
-    def ReadDataSet(self, fileLookUpValue : string, type : string, value : float):
+    def ReadDataSet(self, fileLookUpValue : string, measurementType : string, measurementValue : float):
 
         nameValidator = self.fileInputValidator.FileNameValidator(fileLookUpValue)
         dateValidator = self.fileInputValidator.FileDateValidator(fileLookUpValue)
         timeValidator = self.fileInputValidator.FileTimeValidator(fileLookUpValue)
 
-        if(nameValidator and dateValidator[0] and timeValidator[0] and isinstance(type, str) and isinstance(value, float)):
+        if(nameValidator and dateValidator[0] and timeValidator[0] and isinstance(measurementType, str) and isinstance(measurementValue, float)):
             localDirectory = os.getcwd()+"\\Samples"
             if (os.path.exists(localDirectory + "\\" + dateValidator[1] + '.csv')):
                 localDirectory = localDirectory + "\\" + dateValidator[1] + '.csv'
                 df = pd.read_csv(localDirectory) 
-                self.ExtractDataSet(df, timeValidator[1])
+                self.ExtractDataSet(df, timeValidator[1],measurementType=measurementType, measurementValue=measurementValue, date = dateValidator[1])
                 # print(df.to_string())
 
             else:
                 x= 12
                 print(x)
         
-    def ExtractDataSet(self, completeDataFrame : pd.DataFrame, timeString : string):
+    def ExtractDataSet(self, completeDataFrame : pd.DataFrame, timeString : string, measurementType: string, measurementValue:float, date:string):
 
         #Unoptimized Python solutions for data lookup ->  Hopefully time to optimize using my function.
 
         singleDataPoint = completeDataFrame.loc[completeDataFrame['TIME'] == timeString]
         print(type(singleDataPoint.values[0,1]))
         time = singleDataPoint.values[0,0]
+        indexing = singleDataPoint.index.values
+        print("INDEX" + str(indexing[0]))
         interValResult = self.CalculateDataSetInterval(time)
-        lookupFormat = self.FormatTimeFromInteger(interValResult[0], interValResult[1])
-        print("LOOKUP FORMAT " + lookupFormat)
-        lookupDataPoint = completeDataFrame.loc[completeDataFrame['TIME'] == lookupFormat]
 
+        # print(measurementType)
+        # print(str(singleDataPoint.values[0 , 1]))
         if(pd.isna(singleDataPoint.iloc[0,1])):
-            print("HEY!")
+            print("There is no data record at the requested location")
+        elif(measurementType == str(singleDataPoint.values[0 , 1])):
+            if(str(measurementValue) == str(singleDataPoint.values[0 , 2])):
+                lookupFormat = self.FormatTimeFromInteger(interValResult[0], interValResult[1])
+                print("LOOKUP FORMAT " + lookupFormat)
+                lookupDataPoint = completeDataFrame.loc[completeDataFrame['TIME'] == lookupFormat]
+                dataSampleOutput = completeDataFrame.iloc[singleDataPoint.index.values[0]:lookupDataPoint.index.values[0]+1,[0,1,2]]
+                dataSampleOutput = dataSampleOutput.sort_values('measurement_value')
+                localDirectoryOut = os.getcwd()+"\\Output_Samples"
+
+                if not(os.path.exists(localDirectoryOut + "\\" + date + "T" + lookupFormat.replace(":","-") + ".csv")):
+                    fileName = str(localDirectoryOut + "\\" + date + 'T' + lookupFormat.replace(":","-") + '.csv')
+                    dataSampleOutput.to_csv(fileName, index=False)
+                    
    
     def CalculateDataSetInterval(self, dataInput : pd.DataFrame):
             print(dataInput)
@@ -85,4 +99,4 @@ class DataSampleExtraction():
         return str(newList[0]+":"+newList[1]+":"+"00")
                 
 x = DataSampleExtraction()
-y = x.ReadDataSet("2022-09-20T09:01:00","temperature", 2.1)
+y = x.ReadDataSet("2022-09-20T09:00:55","HeartRate", 103.28)
