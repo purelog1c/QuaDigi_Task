@@ -7,7 +7,7 @@ import itertools
 
 class SampleDataGenerator():
 
-    # This Function generates DataSet for Data Type and value individually for each corresponding [Column, Row]
+    # This Function generates DataSet for {DataType and, value} individually for each corresponding [Column, Row]
     def generateDataWithDataType(self, dataLength):
         dataArray = np.empty([2,dataLength], dtype=object)
         for i in range(dataLength):
@@ -34,8 +34,8 @@ class SampleDataGenerator():
 
     def generateDate(self, startDate, endDate):
         #"27-09-2022" follow this format
-        start = datetime.datetime.strptime(startDate, "%d-%m-%Y")
-        end = datetime.datetime.strptime(endDate, "%d-%m-%Y")
+        start = datetime.datetime.strptime(startDate, "%Y-%m-%d")
+        end = datetime.datetime.strptime(endDate, "%Y-%m-%d")
         date_generated = [start + datetime.timedelta(days=x) for x in range(0, (end-start).days)]
         print(date_generated)
         return date_generated
@@ -57,17 +57,15 @@ class SampleDataGenerator():
         
         return dataFrame
 
-    
-
     def generateXMLOrCSVFile(self, startDate, endDate, dataLength,xmlOrCSV):
         localDirectory = os.getcwd()+"\\Samples"
         fileNames = self.generateDate(startDate, endDate)
         for fileName in fileNames:
-            fileName = fileName.strftime("%d-%m-%Y")
+            fileName = fileName.strftime("%Y-%m-%d")
 
             print(fileName)
             if not(os.path.exists(localDirectory + "\\" + fileName)):
-                dataSet2DList = a.generateDataWithDataType(dataLength=dataLength)
+                dataSet2DList = self.generateDataWithDataType(dataLength=dataLength)
                 typeAndValueDataSet = {'measurement_type': np.hstack(np.array(dataSet2DList[0,:], dtype=object)).tolist(), 
                 'measurement_value':np.hstack(np.array(dataSet2DList[1,:], dtype=object)).tolist()}   
                 typeAndValueDataSet = pd.DataFrame(typeAndValueDataSet)
@@ -78,16 +76,6 @@ class SampleDataGenerator():
                 if(str(xmlOrCSV).lower() == "xlsx"):
                     generatedDataSet.to_excel(localDirectory + '\\' + fileName +'.xlsx')
 
-# value = np.nan
-# typeArray = np.array([np.concatenate([([i]*7) for i in [None]]),"temperature", "SpO2", "HeartRate"])  
-# typeArrayExtended = np.hstack(np.array(typeArray, dtype=object)).tolist()
-# print(typeArrayExtended[9])
 
 a = SampleDataGenerator()
-# dataSet2DList = a.generateDataWithDataType(100)
-# dataSet2DDataFrame = {'measurement_type': np.hstack(np.array(dataSet2DList[0,:], dtype=object)).tolist()}
-# print(dataSet2DDataFrame)
-# b = a.generateDataWithDataType(100)
-# print(b)
-b = a.generateXMLOrCSVFile("27-09-2022","30-09-2022",10000, "csv")
-print(b)
+b = a.generateXMLOrCSVFile("2022-09-20","2022-09-22",10000, "csv")
