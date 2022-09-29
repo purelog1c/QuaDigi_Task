@@ -57,7 +57,7 @@ class SampleDataGenerator():
         
         return dataFrame
 
-    def generateXMLOrCSVFile(self, startDate, endDate, dataLength,xmlOrCSV):
+    def generateCSVFile(self, startDate, endDate, dataLength):
         localDirectory = os.getcwd()+"\\Samples"
         fileNames = self.generateDate(startDate, endDate)
         for fileName in fileNames:
@@ -71,11 +71,11 @@ class SampleDataGenerator():
                 typeAndValueDataSet = pd.DataFrame(typeAndValueDataSet)
                 generatedDataSet = self.generateTimeStamp(dataLength)
                 generatedDataSet = pd.concat([generatedDataSet, typeAndValueDataSet],axis=1)
-                if(str(xmlOrCSV).lower() == "csv"):
-                    generatedDataSet.to_csv(localDirectory + '\\' + fileName +'.csv',encoding='utf-8', index=False)
-                if(str(xmlOrCSV).lower() == "xlsx"):
-                    generatedDataSet.to_excel(localDirectory + '\\' + fileName +'.xlsx')
+                # if(str(xmlOrCSV).lower() == "csv"):
+                generatedDataSet.to_csv(localDirectory + '\\' + fileName +'.csv',encoding='utf-8', index=False)
+                # if(str(xmlOrCSV).lower() == "xlsx"):
+                #     generatedDataSet.to_excel(localDirectory + '\\' + fileName +'.xlsx')
 
 
-a = SampleDataGenerator()
-b = a.generateXMLOrCSVFile("2022-09-20","2022-09-22",10000, "csv")
+# a = SampleDataGenerator()
+# b = a.generateXMLOrCSVFile("2022-09-20","2022-09-22",10000, "csv")
