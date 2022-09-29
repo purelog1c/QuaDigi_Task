@@ -5,8 +5,10 @@ import random
 import os
 import itertools
 
-class SampleDataGenerator():
+from validators.FileInputValidator import FileInputValidator
 
+class SampleDataGenerator(object):
+    fileInputValidator = FileInputValidator()
     # This Function generates DataSet for {DataType and, value} individually for each corresponding [Column, Row]
     def generateDataWithDataType(self, dataLength):
         dataArray = np.empty([2,dataLength], dtype=object)
@@ -37,7 +39,6 @@ class SampleDataGenerator():
         start = datetime.datetime.strptime(startDate, "%Y-%m-%d")
         end = datetime.datetime.strptime(endDate, "%Y-%m-%d")
         date_generated = [start + datetime.timedelta(days=x) for x in range(0, (end-start).days)]
-        print(date_generated)
         return date_generated
 
 
@@ -59,11 +60,14 @@ class SampleDataGenerator():
 
     def generateCSVFile(self, startDate, endDate, dataLength):
         localDirectory = os.getcwd()+"\\Samples"
+        
+        #HEREE!!
+        startDate = self.fileInputValidator.FileDateValidator(startDate)[1]
+        endDate = self.fileInputValidator.FileDateValidator(endDate)[1]
         fileNames = self.generateDate(startDate, endDate)
         for fileName in fileNames:
             fileName = fileName.strftime("%Y-%m-%d")
 
-            print(fileName)
             if not(os.path.exists(localDirectory + "\\" + fileName)):
                 dataSet2DList = self.generateDataWithDataType(dataLength=dataLength)
                 typeAndValueDataSet = {'measurement_type': np.hstack(np.array(dataSet2DList[0,:], dtype=object)).tolist(), 

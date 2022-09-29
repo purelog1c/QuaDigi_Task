@@ -22,21 +22,19 @@ class DataSampleExtraction():
                 localDirectory = localDirectory + "\\" + dateValidator[1] + '.csv'
                 df = pd.read_csv(localDirectory) 
                 self.ExtractDataSet(df, timeValidator[1],measurementType=measurementType, measurementValue=measurementValue, date = dateValidator[1])
-                # print(df.to_string())
 
             else:
                 x= 12
-                print(x)
         
     def ExtractDataSet(self, completeDataFrame : pd.DataFrame, timeString : string, measurementType: string, measurementValue:float, date:string):
 
         #Unoptimized Python solutions for data lookup ->  Hopefully time to optimize using my function.
 
         singleDataPoint = completeDataFrame.loc[completeDataFrame['TIME'] == timeString]
-        print(type(singleDataPoint.values[0,1]))
+        # print(type(singleDataPoint.values[0,1]))
         time = singleDataPoint.values[0,0]
         indexing = singleDataPoint.index.values
-        print("INDEX" + str(indexing[0]))
+        # print("INDEX" + str(indexing[0]))
         interValResult = self.CalculateDataSetInterval(time)
         currentInterval = interValResult[3]
 
@@ -48,9 +46,9 @@ class DataSampleExtraction():
         elif(measurementType == str(singleDataPoint.values[0 , 1])):
             if(str(measurementValue) == str(singleDataPoint.values[0 , 2])):
                 lookupFormat = self.FormatTimeFromInteger(interValResult[0], interValResult[1])
-                print("LOOKUP FORMAT " + lookupFormat)
+                # print("LOOKUP FORMAT " + lookupFormat)
                 lookupDataPoint = completeDataFrame.loc[completeDataFrame['TIME'] == lookupFormat]
-                print(lookupDataPoint)
+                # print(lookupDataPoint)
                 
                 if(currentInterval):
                     dataSampleOutput = completeDataFrame.iloc[lookupDataPoint.index.values[0]:singleDataPoint.index.values[0]+1,[0,1,2]]
@@ -66,7 +64,7 @@ class DataSampleExtraction():
       
 
     def CalculateDataSetInterval(self, dataInput : pd.DataFrame):
-            print(dataInput)
+            # print(dataInput)
             minutes = int(dataInput[3:5])
             seconds = int(dataInput[6:8])
             hour = int(dataInput[:2])
@@ -88,7 +86,7 @@ class DataSampleExtraction():
                     boundry = 55
                     if hour < 0:
                         hour = 23
-                print(minutes)
+                # print(minutes)
 
             elif(boundry == 60):
                 seconds = 0
@@ -102,7 +100,7 @@ class DataSampleExtraction():
     def FormatTimeFromInteger(self, hrs : int, minutes : int):
         tempList = [hrs, minutes]
         newList = [""] * 2
-        print(newList)
+        # print(newList)
         for i in range(len(tempList)):
             if(len(str(tempList[i])) < 2):
                 newList[i] = "0" + str(tempList[i])
@@ -110,5 +108,5 @@ class DataSampleExtraction():
                 newList[i] = str(tempList[i])
         return str(newList[0]+":"+newList[1]+":"+"00")
 
-x = DataSampleExtraction()
-y = x.ReadDataSet("2022-09-20T09:00:00","SpO2", 95.18)
+# x = DataSampleExtraction()
+# y = x.ReadDataSet("2022-09-20T09:00:00","SpO2", 95.18)
