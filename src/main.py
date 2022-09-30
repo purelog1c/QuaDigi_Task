@@ -61,16 +61,20 @@ class Main(object):
         fileOperationOrFileUpload = input('Would you like to make file operation or fileUpload ? (Op/Upload) \n')
 
         if(fileOperationOrFileUpload.lower() == "Upload".lower()):
-            files = input('write the FileName (Not full path). If multiple files, seperate each Filename with ",".\n') 
-            fileList = self.fileString2fileList(files)
-            print(fileList)
-            self.fileUpload.fileUpload(fileList)
+            amountOfFiles = int(input("how many files will you upload ?\n"))
+            if(amountOfFiles >0 and amountOfFiles <=10):
+                allFileList:list = ["None"] * amountOfFiles
+                for i in range(amountOfFiles):
+                    file = input('write the FileName for file number: ' + str(i) + ' (Not the full path).\n')
+                    allFileList[i] = file  
+                    print(allFileList[i])              
+                self.fileUpload.fileUpload(allFileList)
         elif(fileOperationOrFileUpload.lower() == "Op".lower()):
             generatorOrCreator = input('Would you like to generate or extract file sample ? (G/C) \n')
-        if( generatorOrCreator.lower() == "g" ):
-            self.pipeLineGenerate()
-        if(generatorOrCreator.lower()== "c"):
-            self.pipeLineCreateSample()            
+            if( generatorOrCreator.lower() == "g" ):
+                self.pipeLineGenerate()
+            if(generatorOrCreator.lower()== "c"):
+                self.pipeLineCreateSample()            
 
 
 if __name__ == "__main__":
